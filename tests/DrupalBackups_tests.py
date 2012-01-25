@@ -1,5 +1,5 @@
 from nose.tools import *
-import DrupalBackups
+from DrupalBackups.drupalbackups import DrupalBackups
 
 def setup():
   print "SETUP!"
@@ -7,5 +7,9 @@ def setup():
 def teardown():
   print "TEAR DOWN!"
 
-def test_basic():
+def test_configure():
+  backups = DrupalBackups()
+  configfilefound = backups.config()
+  assert configfilefound
   print "I RAN!"
+

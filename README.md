@@ -5,8 +5,8 @@ Drupal Backups
 
 ### Expected usage
 
-* create a json configuration file describing each site's info
-* then:
+* place a json configuration in the directory where the backups will be stored
+* then run in  a python script:
 
         backups = DrupalBackups()
         backups.backup_all_now()

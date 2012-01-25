@@ -1,9 +1,11 @@
 {
   "servers":
     [{
-      "alias": "Test Drupal Site",
-      "ssh": "user@example.com",
-      "root_directory": "/srv/www/example.com/public_html/",
+      "name": "www.example.com",
+      "location": "local",
+      "user": "test",
+      "url": "example.com",
+      "root_dir": "~/Documents/Sites/www.example.com/public_html/",
       "server": "apache",
       "drush": "drush"
     }]

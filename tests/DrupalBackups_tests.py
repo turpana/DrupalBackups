@@ -12,5 +12,11 @@ def test_configure():
   assert not backups.self_config()
   backups.configfile = "./tests/drupalservers.json"
   assert backups.self_config()
+  assert 'www.example.com' == backups.servers[0]['name']
   print "I RAN!"
 
+def test_backup_all_now():
+  backups = DrupalBackups()
+  backups.configfile = "./tests/drupalservers.json"
+  assert backups.self_config()
+  assert backups.backup_all_now()

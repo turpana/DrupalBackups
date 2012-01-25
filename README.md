@@ -8,5 +8,6 @@ Drupal Backups
 * create a json configuration file describing each site's info
 * then:
 
-    backups = DrupalBackups()
-    backups.backup_all_now()
+
+      backups = DrupalBackups()
+      backups.backup_all_now()

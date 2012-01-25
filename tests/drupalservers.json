@@ -5,7 +5,7 @@
       "location": "local",
       "user": "test",
       "url": "example.com",
-      "root_dir": "~/Documents/Sites/www.example.com/public_html/",
+      "root_dir": "/Users/turpana/Documents/Sites/www.example.com/public_html/",
       "server": "apache",
       "drush": "drush"
     }]

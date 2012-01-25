@@ -24,7 +24,7 @@ def test_backup_all_now():
 def test_gather_site_info():
   backups = DrupalBackups()
   backups.configfile = "./tests/drupalservers.json"
-  backups.self_config()
+  assert backups.self_config()
   test_info = backups.gather_site_info(backups.servers[0])
   assert 'sites/default/files' == test_info['file_public_path']
-  assert '' == test_info['file_private_path']
+  assert '~/Documents/Sites/www.example.com/private_files' == test_info['file_private_path']

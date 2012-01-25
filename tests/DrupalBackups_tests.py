@@ -9,10 +9,8 @@ def teardown():
 
 def test_configure():
   backups = DrupalBackups()
-  configfilefound = backups.self_config()
-  assert not configfilefound
+  assert not backups.self_config()
   backups.configfile = "./tests/drupalservers.json"
-  configfilefound = backups.self_config()
-  assert configfilefound
+  assert backups.self_config()
   print "I RAN!"
 

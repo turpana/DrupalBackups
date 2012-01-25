@@ -39,7 +39,7 @@ class DrupalBackups(object):
         except OSError:
           print "Error adding directory for "+s['name']+", please ensure you have write privileges"
           break
-      timestamp = strftime('%Y_%m_%d_%H%M', gmtime())
+      timestamp = strftime('%Y_%m_%d_%H%M_%S', gmtime())
       target_dir = '/'.join([self.backups_dir, s['name'], timestamp]) + '/'
       os.mkdir(target_dir)
       site_info = self.gather_site_info(s)
@@ -48,4 +48,7 @@ class DrupalBackups(object):
     return False
 
   def gather_site_info(self, s):
-    return []
+    info= {}
+    info['file_public_path'] = 'sites/default/files'
+    info['file_private_path'] = ''
+    return info

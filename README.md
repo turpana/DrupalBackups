@@ -5,7 +5,7 @@ Drupal Backups
 
 ### Intended usage
 
-* place a json configuration in the directory where the backups will be stored
+* place a json configuration in the directory where the backups will be stored (see tests folder for example)
 * then run in a python script:
 
         backups = DrupalBackups()

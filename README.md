@@ -6,7 +6,9 @@ Drupal Backups
 ### Intended usage
 
 * place a json configuration in the directory where the backups will be stored (see tests folder for example)
+* make sure drush is setup on each drupal server
 * then run in a python script:
 
         backups = DrupalBackups()
         backups.backup_all_now()
+

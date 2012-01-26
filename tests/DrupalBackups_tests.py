@@ -1,5 +1,6 @@
 from nose.tools import *
 from DrupalBackups.drupalbackups import DrupalBackups
+from os import path
 
 def setup():
   print "SETUP!"
@@ -21,10 +22,16 @@ def test_backup_all_now():
   assert backups.self_config()
   assert backups.backup_all_now()
 
-def test_gather_site_info():
+def test_create_archive():
   backups = DrupalBackups()
   backups.configfile = "./tests/drupalservers.json"
   assert backups.self_config()
-  test_info = backups.gather_site_info(backups.servers[0])
-  assert 'sites/default/files' == test_info['file_public_path']
-  assert '~/Documents/Sites/www.example.com/private_files' == test_info['file_private_path']
+  test_info = backups.create_archive(backups.servers[0])
+  assert test_info['gathered']
+  assert path.isfile(test_info['filepath'])
+
+def test_backup_ard():
+  backups = DrupalBackups()
+  backups.configfile = "./tests/drupalservers.json"
+  assert backups.self_config()
+  assert backups.backup_ard(backups.servers[0], backups.create_archive(backups.servers[0]))

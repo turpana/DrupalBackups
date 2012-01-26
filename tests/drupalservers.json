@@ -2,6 +2,7 @@
   "servers":
     [{
       "name": "www.example.com",
+      "target_dir": "www.example.com",
       "location": "local",
       "user": "test",
       "url": "example.com",

@@ -33,6 +33,7 @@ class DrupalBackups(object):
 
   def backup_all_now(self):
     print 'Backing up all sites now to ' + self.backups_dir + '/'
+    errors = 0
     for s in self.servers:
       print 'Backing up '+ s['name']
       if (not os.path.exists(self.backups_dir + '/' + s['name'])):
@@ -41,29 +42,36 @@ class DrupalBackups(object):
         except OSError:
           print "Error adding directory for "+s['name']+", please ensure you have write privileges."
           break
-      timestamp = strftime('%Y_%m_%d_%H%M_%S', gmtime())
-      target_dir = '/'.join([self.backups_dir, s['name'], timestamp]) + '/'
-      os.mkdir(target_dir)
-      site_info = self.gather_site_info(s)
-      if not site_info['gathered']:
-        print "Error gathering site information for "+s['name']+". backup not completed."
+      ard = self.create_archive(s)
+      if not ard['gathered']:
+        print "Error creating backup for "+s['name']
         break
+      errors += self.backup_ard(s, ard)
+    return True
 
-    print 'Not implemented, so returning False'
-    return False
-
-  def gather_site_info(self, s):
+  def create_archive(self, s):
     if s['location'] != 'local':
       return {'gathered': False}
-    vars = ['file_private_path', 'file_public_path']
-    info = {}
+    ard = {}
     cwd = os.getcwd()
     os.chdir(s['root_dir'])
-    for v in vars:
-      popen = subprocess.Popen([s['drush'], "vget", v], stdout=subprocess.PIPE)
-      output = popen.communicate()
-      splitoutput = output[0].split('"')
-      info[v] = splitoutput[1]
-    info['gathered'] = True
+    popen = subprocess.Popen([s['drush'], "ard", "--pipe"], stdout=subprocess.PIPE)
+    output = popen.communicate()
+    ard['filepath'] = output[0].strip()
+    ard['gathered'] = True
     os.chdir(cwd)
-    return info
+    return ard
+
+  def backup_ard(self, s, ard):
+    if s['location'] != 'local':
+      return False
+    print '*****'
+    print ' '+s['name']
+    cwd = os.getcwd()
+    os.chdir(s['name'])
+    source_dir = ard['filepath']
+    print 'Copying from: '+ source_dir + ' to: ' + './' 
+    popen = subprocess.Popen(["cp", source_dir, './'], stdout=subprocess.PIPE)
+    os.chdir(cwd)
+    print '*****'
+    return True

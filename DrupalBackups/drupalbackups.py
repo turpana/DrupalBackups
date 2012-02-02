@@ -1,8 +1,10 @@
 # -*- coding:utf-8 -*-
+from __future__ import with_statement
 import fileinput
 import os
 import pprint
 from time import strftime, gmtime
+from fabric.api import local, run
 import subprocess
 import re
 try:
@@ -12,6 +14,7 @@ except ImportError:
 
 class DrupalBackups(object):
   configfile = './drupalservers.json'
+  re_out = re.compile('.*out:')
 
   def __init__(self):
     self.self_config()
@@ -50,28 +53,47 @@ class DrupalBackups(object):
     return True
 
   def create_archive(self, s):
-    if s['location'] != 'local':
-      return {'gathered': False}
     ard = {}
-    cwd = os.getcwd()
-    os.chdir(s['root_dir'])
-    popen = subprocess.Popen([s['drush'], "ard", "--pipe"], stdout=subprocess.PIPE)
-    output = popen.communicate()
-    ard['filepath'] = output[0].strip()
-    ard['gathered'] = True
-    os.chdir(cwd)
-    return ard
+    if s['location'] == 'local':
+      cwd = os.getcwd()
+      os.chdir(s['drupal_root'])
+      popen = subprocess.Popen([s['drush'], "ard", "--pipe"], stdout=subprocess.PIPE)
+      output = popen.communicate()
+      ard['filepath'] = output[0].strip()
+      ard['gathered'] = True
+      os.chdir(cwd)
+      return ard
+    if s['location'] == 'remote':
+      popen = subprocess.Popen(['fab', '-H', '%s@%s' % (s['user'], s['host']), "ard:drupal_dir=%s,drush_command='%s --pipe ard'" % (s['drupal_root'], s['drush'])], stdout=subprocess.PIPE)
+      output = popen.communicate()[0].split('\n')
+      for o in output:
+        try:
+          if (self.re_out.search(o)):
+              ard['filepath'] = self.re_out.sub('',o).strip()
+              print 'filepath: %s' % ard['filepath']
+              ard['gathered'] = True
+              return ard
+        except TypeError, e:
+          break
+      ard['gathered'] = False
+      return ard
 
   def backup_ard(self, s, ard):
-    if s['location'] != 'local':
-      return False
-    print '*****'
-    print ' '+s['name']
-    cwd = os.getcwd()
-    os.chdir(s['name'])
-    source_dir = ard['filepath']
-    print 'Copying from: '+ source_dir + ' to: ' + './' 
-    popen = subprocess.Popen(["cp", source_dir, './'], stdout=subprocess.PIPE)
-    os.chdir(cwd)
-    print '*****'
-    return True
+    if s['location'] == 'local':
+      cwd = os.getcwd()
+      os.chdir(s['name'])
+      source = ard['filepath']
+      print 'Copying '+ source + ' to: ' + cwd + '/' + s['name']
+      popen = subprocess.Popen(["cp", source, './'], stdout=subprocess.PIPE)
+      os.chdir(cwd)
+      return True
+    if s['location'] == 'remote':
+      cwd = os.getcwd()
+      os.chdir(s['name'])
+      source = ard['filepath']
+      for v in source.split('/'):
+        target = v 
+      print 'Copying' + source + ' to: ' + cwd + '/' + s['name']
+      popen = subprocess.Popen(["scp", '%s@%s:%s' % ( s['user'], s['host'], source ), target], stdout=subprocess.PIPE)
+      os.chdir(cwd)
+      return True

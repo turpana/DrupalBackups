@@ -1,13 +1,23 @@
 {
   "servers":
     [{
-      "name": "www.example.com",
-      "target_dir": "www.example.com",
+      "name": "local.example.com",
+      "target_dir": "local.example.com",
       "location": "local",
       "user": "test",
-      "url": "example.com",
-      "root_dir": "/Users/turpana/Documents/Sites/www.example.com/public_html/",
+      "host": "example.com",
+      "drupal_root": "/Users/turpana/Documents/Sites/local.example.com/public_html/",
       "server": "apache",
       "drush": "drush"
-    }]
+    },
+    {
+      "name": "example.com",
+      "target_dir": "example.com",
+      "location": "remote",
+      "user": "unixuser",
+      "host": "example.com",
+      "drupal_root": "/srv/www/example.com/public_html",
+      "server": "apache",
+      "drush": "drush"
+     }]
 }

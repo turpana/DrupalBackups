@@ -97,3 +97,7 @@ class DrupalBackups(object):
       popen = subprocess.Popen(["scp", '%s@%s:%s' % ( s['user'], s['host'], source ), target], stdout=subprocess.PIPE)
       os.chdir(cwd)
       return True
+
+if __name__ == '__main__':
+  backups = DrupalBackups()
+  backups.backup_all_now()
